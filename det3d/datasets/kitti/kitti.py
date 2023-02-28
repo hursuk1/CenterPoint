@@ -11,7 +11,7 @@ from copy import deepcopy
 
 from det3d.core import box_np_ops
 from det3d.datasets.kitti import kitti_common as kitti
-from det3d.datasets.utils.eval import get_coco_eval_result, get_official_eval_result
+# from det3d.datasets.utils.eval import get_coco_eval_result, get_official_eval_result
 
 # try:
 #     from nuscenes.nuscenes import NuScenes
@@ -29,14 +29,16 @@ from det3d.datasets.custom import PointCloudDataset
 # )
 from det3d.datasets.registry import DATASETS
 
-@DATASETS.register_dataset
+@DATASETS.register_module
 class KittiDataset(PointCloudDataset):
     NumPointFeatures = 4
 
     def __init__(self,
-                 root_path,
                  info_path,
+                 root_path,
+                 pipeline=None,
                  class_names=None,
+                 test_mode=False,
                  prep_func=None,
                  num_point_features=None):
         assert info_path is not None
@@ -152,30 +154,31 @@ class KittiDataset(PointCloudDataset):
         z_axis = 1  # KITTI camera format use y as regular "z" axis.
         z_center = 1.0  # KITTI camera box's center is [0.5, 1, 0.5]
         # for regular raw lidar data, z_axis = 2, z_center = 0.5.
-        result_official_dict = get_official_eval_result(
-            gt_annos,
-            dt_annos,
-            self._class_names,
-            z_axis=z_axis,
-            z_center=z_center)
-        result_coco = get_coco_eval_result(
-            gt_annos,
-            dt_annos,
-            self._class_names,
-            z_axis=z_axis,
-            z_center=z_center)
-        return {
-            "results": {
-                "official": result_official_dict["result"],
-                "coco": result_coco["result"],
-            },
-            "detail": {
-                "eval.kitti": {
-                    "official": result_official_dict["detail"],
-                    "coco": result_coco["detail"]
-                }
-            },
-        }
+        # result_official_dict = get_official_eval_result(
+        #     gt_annos,
+        #     dt_annos,
+        #     self._class_names,
+        #     z_axis=z_axis,
+        #     z_center=z_center)
+        # result_coco = get_coco_eval_result(
+        #     gt_annos,
+        #     dt_annos,
+        #     self._class_names,
+        #     z_axis=z_axis,
+        #     z_center=z_center)
+        # return {
+        #     "results": {
+        #         "official": result_official_dict["result"],
+        #         "coco": result_coco["result"],
+        #     },
+        #     "detail": {
+        #         "eval.kitti": {
+        #             "official": result_official_dict["detail"],
+        #             "coco": result_coco["detail"]
+        #         }
+        #     },
+        # }
+        return None, None
 
     def __getitem__(self, idx):
         input_dict = self.get_sensor_data(idx)

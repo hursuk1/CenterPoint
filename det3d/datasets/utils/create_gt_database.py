@@ -9,7 +9,8 @@ from tqdm import tqdm
 
 dataset_name_map = {
     "NUSC": "NuScenesDataset",
-    "WAYMO": "WaymoDataset"
+    "WAYMO": "WaymoDataset",
+    "KITTI": "KittiDataset"
 }
 
 
